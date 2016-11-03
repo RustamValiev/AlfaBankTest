@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "stdafx.h"
 #include <iostream>
 #include "BasicPrimtives.h"
@@ -105,48 +105,77 @@ private:
 		size_t CurrDistance = 0;
 		Distance[GOAL_VERTEX_IDX] = CurrDistance;
 
-		// два массива, 
+		// два массива, Src и Dst, используемые в процессе обработки
+		//   * Src это pSrcVertexes - список "к рассмотрению"
+		//   * Dst это pDstVertexes - подготавливаемый список
 		size_t CurrIdx = 0, NextIdx = 1;
 		vector<vector<size_t> > LookingVertexes(2);
-		vector<size_t> * pCurrVertexes = &LookingVertexes[CurrIdx];
-		vector<size_t> * pNextVertexes = &LookingVertexes[NextIdx];
+		vector<size_t> * pSrcVertexes = &LookingVertexes[CurrIdx];
+		vector<size_t> * pDstVertexes = &LookingVertexes[NextIdx];
 		
-		pCurrVertexes->push_back(GOAL_VERTEX_IDX);
-		size_t ViewedVertex = Elements;
+		// начинаем с "целевой вершины"
+		pSrcVertexes->push_back(GOAL_VERTEX_IDX);
+
+		// поиск пути, признак того, что путь найден: PathFounded=true
 		bool PathFounded = false;
-		while (pCurrVertexes->size() && !PathFounded)
+		while (pSrcVertexes->size() && !PathFounded)
 		{
+			// следующие вершины, которые берутся в рассмотренипе
+			// имеют расстояние до "конечной вершины" на единицу больше
 			++CurrDistance;
-			pNextVertexes->clear();
-			for (size_t i = 0; i < pCurrVertexes->size()  && !PathFounded; ++i)
+
+			// готовимся к следующему проходу, очищаем вектор "следующих рассматриваемых вершин"
+			pDstVertexes->clear();
+			for (size_t i = 0; i < pSrcVertexes->size()  && !PathFounded; ++i)
 			{
-				ViewedVertex = (*pCurrVertexes)[i];
+				// берем вершину из списка "к рассмотрению", перебираем исходящие дуги
+				// точнее - все вершины, связаные с данной (которая "к рассмотрению") 
+				size_t ViewedVertex = (*pSrcVertexes)[i];
 				for (size_t j = 0; j < crGraphData[ViewedVertex].size() && !PathFounded; ++j)
 				{
+					// для каждой "связанной вершины"....
 					size_t NextVertex = crGraphData[ViewedVertex][j];
-					if (FIRST_VERTEX_IDX == NextVertex)
-						PathFounded = true;
-					else if (Distance[NextVertex] == Elements)
+					
+					// проверяем - была ли "новая вершина" уже посчитана ранее - в этом случае для нее
+					// вычислена дистанция до "целевой вершины" и занесена в  Distance (изначально в
+					// ячейках находится значение, которое не может быть получено в процессе вычислений 
+					// (равноеElements), что является признаком того, что вершина еще не была просмотрена)
+					if (Distance[NextVertex] == Elements)
 					{
+						// если вершина еще не была просмотрена, то для нее заполняем значения в векторах
+						//   Distance - расстояние до "целевой вершины"
+						//   Previous - индекс вершины, через которую идет кратчайший путь к "целевой"
+						// далее, заносим вершину в "список к последующему просмотру"
 						Previous[NextVertex] = ViewedVertex;
 						Distance[NextVertex] = CurrDistance;
-						pNextVertexes->push_back(NextVertex);
+						pDstVertexes->push_back(NextVertex);
 					}
+
+					// проверяем не является ли она "исходной" (т.е. не нашли ли искомый путь)
+					// в таком случае устаналиваем признак того, что найдено искомое (PathFounded = true)
+					if (FIRST_VERTEX_IDX == NextVertex)
+						PathFounded = true;
 				}
 			}
+
+			// чтобы не тратить время на копирование - просто делаем swap массивов
 			swap(CurrIdx, NextIdx);
-			pCurrVertexes = &LookingVertexes[CurrIdx];
-			pNextVertexes = &LookingVertexes[NextIdx];
+			pSrcVertexes = &LookingVertexes[CurrIdx];
+			pDstVertexes = &LookingVertexes[NextIdx];
 		}
 
+		// строим путь от "исходной" до "целевой" вершины - раскрутка делается в порядке
+		// обратном тому, которому следовали на предыдущем шаге - раскрутка производится
+		// с использованием массива Previous - в таком случае первой идет "исходная вершина",
+		// затем - все вершины пути вплоть до "целевой" вершины
 		rPath.clear();
 		if (PathFounded)
 		{
-			rPath.push_back(FIRST_VERTEX_IDX);
-			for (size_t i = 0; i < CurrDistance; ++i)
+			size_t VertexIdx = FIRST_VERTEX_IDX;
+			for (size_t i = 0; i < CurrDistance+1; ++i)
 			{
-				rPath.push_back(ViewedVertex);
-				ViewedVertex = Previous[ViewedVertex];
+				rPath.push_back(VertexIdx);
+				VertexIdx = Previous[VertexIdx];
 			}
 		}
 	}
