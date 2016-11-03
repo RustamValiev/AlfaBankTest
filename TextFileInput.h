@@ -162,6 +162,5 @@ void CTextFileInput< Calibrate >::ReadDict(
 
 		if (IncommingStr.length() == LenOfStr)
 			rTaskData.push_back(IncommingStr);
-//		cout << IncommingStr << ":(" << IncommingStr.length() << ") " << endl;
 	}
 }
