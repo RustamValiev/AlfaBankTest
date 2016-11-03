@@ -79,14 +79,6 @@ private:
 			for (size_t j = 0; j < rGraphData[i].size(); ++j)
 				rGraphData[rGraphData[i][j]].push_back(i);
 		}
-
-		cout << endl;
-		for (size_t i = 0; i < rGraphData.size(); ++i)
-		{
-			cout << i << ": " << vTaskData[i] << "\r\n";
-			for (size_t j = 0; j < rGraphData[i].size(); ++j)
-				cout << " -> (" << rGraphData[i][j] << ") " << vTaskData[rGraphData[i][j]] << endl;
-		}
 	}
 
 	void BuildPath(
