@@ -150,13 +150,10 @@ private:
 		rPath.clear();
 		if (PathFounded)
 		{
-			cout << endl << endl;
 			rPath.push_back(FIRST_VERTEX_IDX);
-			cout << FIRST_VERTEX_IDX << endl;
 			for (size_t i = 0; i < CurrDistance; ++i)
 			{
 				rPath.push_back(ViewedVertex);
-				cout << ViewedVertex << endl;
 				ViewedVertex = Previous[ViewedVertex];
 			}
 		}
