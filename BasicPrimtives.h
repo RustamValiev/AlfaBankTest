@@ -22,13 +22,14 @@ public:
 	good_exception(std::string const &crMessage) : exception(crMessage.c_str()) {}
 };
 
+template <typename TFileType = ifstream>
 class CAutoOpenFile
 {
 public:
-	ifstream & mrThisFile;
+	TFileType & mrThisFile;
 
 	CAutoOpenFile(
-		ifstream &			rThisFile,
+		TFileType &			rThisFile,
 		string const &		crFileName,
 		ios_base::openmode	vMode
 	) : mrThisFile(rThisFile) {

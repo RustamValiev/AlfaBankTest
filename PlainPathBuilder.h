@@ -40,7 +40,6 @@ public:
 			rPath.push_back(crTaskData[PathAsIntEdges[i]]);
 	}
 
-private:
 	typedef vector<vector<size_t> >	SimpleGraphData;
 	typedef vector<size_t>			IdxVector;
 

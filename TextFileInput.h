@@ -98,7 +98,7 @@ void CTextFileInput< Calibrate >::ReadGoal(
 ) const {
 	// открыть файл с задачей (исходной и целевой строками)
 	ifstream GoalFile;
-	CAutoOpenFile AutoTF(GoalFile, cpGoalsFileName, ios::in);
+	CAutoOpenFile<> AutoTF(GoalFile, cpGoalsFileName, ios::in);
 	if (!GoalFile)
 		throw exception("FAIL: No goal file.");
 
@@ -148,7 +148,7 @@ void CTextFileInput< Calibrate >::ReadDict(
 ) const {
 	// открыть файл со словарем
 	ifstream DictFile;
-	CAutoOpenFile AutoDF(DictFile, cpDictFileName, ios::in);
+	CAutoOpenFile<> AutoDF(DictFile, cpDictFileName, ios::in);
 	if (!DictFile)
 		throw exception("FAIL: no gictionary fail.");
 
